@@ -8,7 +8,7 @@ bryton-bt-tools is a web app to download FIT/GPX files from [Bryton cycle comput
 *Note : It'll works on moderns browsers supporting bluetooth ([list here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API#browser_compatibility)).*
 
 ## Usage
- - [Launch the webpage](https://spasutto.github.io/bryton-bt-tools/bryton.html) from a device supporting bluetooth (hardware+[compatible browser](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API#browser_compatibility))
+ - [Launch the webpage](https://spasutto.github.io/bryton-bt-tools/bryton.html) from a bluetooth enabled device (hardware+[compatible browser](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API#browser_compatibility))
  - activate the bluetooth on your device and turn on the cycling computer
  - click on the big power button
  - choose your cycling computer in the BT selection popup
