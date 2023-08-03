@@ -89,26 +89,21 @@ class BrytonBTTool {
   internalconnect() {
     this.connected = false;
     this.curstep='connecting';
-    //this.log('Connecting to GATT Server...');
     try {
       this.device.gatt.connect().then(server => {
-        //this.log('Getting Service...');
         return server.getPrimaryService(SERVICE_COMMAND_AND_DATA);
       })
       .then(s => {
         this.service = s;
-        //this.log('Getting data characteristic...');
         return this.service.getCharacteristic(DATA_CHANNEL_UUID);
       })
       .then(c => {
         this.dataCharacteristic = c;
         return c.startNotifications().then(_ => {
-          //this.log('> Notifications started for dataCharacteristic');
           this.dataCharacteristic.addEventListener('characteristicvaluechanged', this.handleDataCharacteristicValueChanged.bind(this));
         });
       })
       .then(s => {
-        //this.log('Getting Command characteristic...');
         return this.service.getCharacteristic(COMMAND_CHANNEL_UUID);
       })
       .then(c => {
@@ -189,14 +184,6 @@ class BrytonBTTool {
   handleCmdCharacteristicValueChanged(event) {
     try {
       const value = event.target.value;
-      /*this.log('<u>Cmd characteristic received</u> ' + value.byteLength + " bytes");
-      if (ArrayBuffer.isView(value)) {
-        let pad = value.byteLength.toString().length;
-        for (let i=0; i<value.byteLength; i++) {
-          let valbyte = value.getUint8(i);
-          this.log(i.toString().padStart(pad, '0') + " : " + valbyte.toString().padStart(2, '0') + " 0x" + valbyte.toString(16).padStart(2, '0') + " 0b" + intToBinaryString(valbyte, 8));
-        }
-      }*/
       let unsignedByte = value.getUint8(0);
       let unsignedByte1 = value.getUint8(1);
       let intValue = this.getBitByByte(unsignedByte1, 0, 2);
@@ -219,14 +206,6 @@ class BrytonBTTool {
   handleDataCharacteristicValueChanged(event) {
     try {
       const value = event.target.value;
-      /*this.log('<u>Data characteristic received</u> ' + value.byteLength + " bytes");
-      if (ArrayBuffer.isView(value)) {
-        let pad = value.byteLength.toString().length;
-        for (let i=0; i<value.byteLength; i++) {
-          let valbyte = value.getUint8(i);
-          this.log(i.toString().padStart(pad, '0') + " : " + valbyte.toString().padStart(2, '0') + " 0x" + valbyte.toString(16).padStart(2, '0') + " 0b" + intToBinaryString(valbyte, 8));
-        }
-      }*/
       let intValue = value.getInt16(0); // 0 1
       if (intValue == 0) {
         this.onChangeDataCrcCount = 0;
@@ -497,16 +476,6 @@ class BrytonBTTool {
       arrayList.push(arrayList2);
     }
     return arrayList;
-  }
-  fitFileNameToByteArray(fileId) {
-  }
-  fileIdToFormatString(fileId) {
-    //let array = toBytesInt32(fileId);
-    //let date = new Date(((array[0]<<24) + (array[1]<<16) + (array[2]<<8) + array[3]) * 1000);
-    //let date = new Date(fileId*1000);
-    /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss");
-    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return simpleDateFormat.format(date);*/
   }
   intToBinaryString(value, nob, sep) {
     nob = typeof nob === 'number' && nob > 0 ? nob : 8;

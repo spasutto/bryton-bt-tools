@@ -15,7 +15,7 @@ bryton-bt-tools is a web app to download FIT/GPX files from [Bryton cycle comput
  - wait for the data download
  - click GPX or FIT to download the activity in the desired format
 
-## notes
+## Notes
 Supported activity data in GPX export includes :
  - latitude
  - longitude
