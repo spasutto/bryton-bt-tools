@@ -84,7 +84,7 @@
       --dot-diameter: 380px;
       --circle-border-width: 2px;
       --default-color: gainsboro;
-      --completion-color: seagreen;
+      --completion-color: #bfff41;
     }
     .circle-container {
       overflow: visible;
@@ -168,6 +168,7 @@
   </script>
 
 <script>
+const TEST_DEV = false;
 var filecache = {};
 function log(msg) {
   //logelm.innerHTML += msg + '\n';logelm.scrollTop = logelm.scrollHeight;
@@ -192,7 +193,7 @@ function onerror(msg) {
   alert(msg);
 }
 function connect() {
-  if (false) {
+  if (TEST_DEV) {
     data.connected = true;
     bryton.DeviceInfos={"UD":"1505160400001122","IV":"024.003.0014.10.006.001","MN":"Rider310","CP":"201,0,1,6,9,101"};
     onfilelistreceived({'result':[{"activityDist":255,"activityTime":4395,"fileId":1690151148,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"24/07/2023 00:25:48","payloadSize":19},{"activityDist":8,"activityTime":38,"fileId":1690134190,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"23/07/2023 19:43:10","payloadSize":19},{"activityDist":67777,"activityTime":15491,"fileId":1688393782,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"03/07/2023 16:16:22","payloadSize":19},{"activityDist":12908,"activityTime":1479,"fileId":1688388426,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"03/07/2023 14:47:06","payloadSize":19},{"activityDist":0,"activityTime":4,"fileId":1688297069,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"02/07/2023 13:24:29","payloadSize":19},{"activityDist":33749,"activityTime":10082,"fileId":1688208755,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"01/07/2023 12:52:35","payloadSize":19},{"activityDist":11411,"activityTime":2318,"fileId":1687871866,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"27/06/2023 15:17:46","payloadSize":19},{"activityDist":83607,"activityTime":15375,"fileId":1654339886,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"04/06/2022 12:51:26","payloadSize":19},{"activityDist":59940,"activityTime":10589,"fileId":1653656811,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"27/05/2022 15:06:51","payloadSize":19},{"activityDist":0,"activityTime":6,"fileId":1633995064,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"12/10/2021 01:31:04","payloadSize":19},{"activityDist":105432,"activityTime":18460,"fileId":1633946484,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"11/10/2021 12:01:24","payloadSize":19},{"activityDist":77296,"activityTime":17374,"fileId":1592817384,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"22/06/2020 11:16:24","payloadSize":19},{"activityDist":51231,"activityTime":10039,"fileId":1592318563,"isWorkout":0,"sportType":2,"workoutId":0,"fileIdToTimeStamp":"16/06/2020 16:42:43","payloadSize":19}]});
@@ -204,7 +205,7 @@ function connect() {
   } catch(e) {log(e);}
 }
 function getFile(fileId, gpx=true) {
-  if (false) {
+  if (TEST_DEV) {
     data.percentage = 0;data.loading = true;
     let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=110) {clearInterval(timer);data.loading=false;}}, 1000);
     //let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=30) {clearInterval(timer);}}, 1000);
