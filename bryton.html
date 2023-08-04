@@ -23,6 +23,7 @@
     td {
       border-bottom: solid 1px white;
       padding: 5px 0px;
+      font-size: 6vmin;
     }
     #wrapper {
       position:relative;
@@ -227,6 +228,10 @@ function onfilereceived(bytes) {
   data.loading = false;data.percentage=0;
   filecache[window.currentfile.id] = {'data': bytes};
   let filename = window.currentfile.id;
+  let date = new Date(filename);
+  if (!isNaN(date)) {
+    filename = 'act_'+date.toJSON().slice(0,19).replaceAll('-','').replaceAll(':','').replace('T','_');
+  }
   if (window.currentfile.gpx) {
     downloadGPX(filename, bytes);
   } else {
