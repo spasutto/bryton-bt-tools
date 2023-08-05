@@ -229,7 +229,7 @@ function onfilereceived(bytes) {
   data.loading = false;data.percentage=0;
   filecache[window.currentfile.id] = {'data': bytes};
   let filename = window.currentfile.id;
-  let date = new Date(filename);
+  let date = new Date(filename*1000);
   if (!isNaN(date)) {
     filename = 'act_'+date.toJSON().slice(0,19).replaceAll('-','').replaceAll(':','').replace('T','_');
   }
@@ -240,30 +240,37 @@ function onfilereceived(bytes) {
   }
   window.currentfile = null;
 }
-function downloadFile(fileName, data, mime) {
-  let blob = new Blob([data], { type: mime });
+function downloadFile(fileName, bytes, mime) {
+  let blob = new Blob([bytes], { type: mime });
   let link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
   link.download = fileName;
   link.click();
 }
-function toGPX(data) {
-  let prefix = '<?xml version="1.0"?><gpx creator="Fit2GPX" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"><trk><trkseg>';
+function toGPX(bytes) {
+  // TODO rajouter "with barometer" à la fin de l'attribut creator pour forcer strava à prendre en compte le barometre
+  // https://developers.strava.com/docs/uploads/#device-and-elevation-data
+  let prefix = '<?xml version="1.0"?><gpx creator="'+data.devinfos?.MN+'" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"><trk><trkseg>';
   let suffix = '</trkseg></trk></gpx>';
 
   let cur_hr = null;
   let cur_cad = null;
-  let points = data.records.reduce((acc, cur) => {
+  let cur_temp = null;
+  let points = bytes.records.reduce((acc, cur) => {
     if (typeof cur.heart_rate === 'number') {
       cur_hr = cur.heart_rate;
     }
     if (typeof cur.cadence === 'number') {
       cur_cad = cur.cadence;
     }
+    if (typeof cur.temperature === 'number') {
+      cur_temp = cur.temperature;
+    }
     if (typeof cur.position_lat === 'number') {
       let exts = '';
       let hr = '';
       let cad = '';
+      let temp = '';
       let time = '';
       if (typeof cur.timestamp.toISOString === 'function') {
         time = cur.timestamp.toISOString();
@@ -282,8 +289,12 @@ function toGPX(data) {
         cad = '<ns3:cad>'+cur_cad+'</ns3:cad>';
         cur_cad = null;
       }
-      if (hr.length>0||cad.length>0) {
-        exts = `<extensions><ns3:TrackPointExtension>${hr}${cad}</ns3:TrackPointExtension></extensions>`;
+      if (cur_temp != null) {
+        temp = '<ns3:atemp>'+cur_temp+'</ns3:atemp>';
+        cur_temp = null;
+      }
+      if (hr.length>0||cad.length>0||temp.length>0) {
+        exts = `<extensions><ns3:TrackPointExtension>${hr}${cad}${temp}</ns3:TrackPointExtension></extensions>`;
       }
       acc.push(`<trkpt lat="${cur.position_lat}" lon="${cur.position_long}">${time}${ele}${exts}</trkpt>`);
     }
@@ -305,13 +316,13 @@ function downloadGPX(fileName, byte) {
     mode: 'list',
   });
 
-  fitParser.parse(byte, (function (error, data) {
+  fitParser.parse(byte, (function (error, bytes) {
     if (error) {
       log(error);
     } else {
-      //this.log(JSON.stringify(data, null, 2));
-      downloadFile(fileName+'.gpx', toGPX(data), 'application/gpx+xml');
-      //console.this.log(data.records[0]);
+      //this.log(JSON.stringify(bytes, null, 2));
+      downloadFile(fileName+'.gpx', toGPX(bytes), 'application/gpx+xml');
+      //console.this.log(bytes.records[0]);
     }
   }));
 }
