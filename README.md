@@ -22,5 +22,5 @@ Supported activity data in GPX export includes :
  - cadence
  - heartrate
 
-The resulting GPX (or FIT) file can be uploaded on Strava : https://www.strava.com/upload/select. The above-mentioned data will be displayed on the activity page
+The resulting GPX (or FIT) file [can be uploaded on Strava](https://www.strava.com/upload/select). The above-mentioned data will be displayed on the activity page
 
