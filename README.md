@@ -21,6 +21,7 @@ Supported activity data in GPX export includes :
  - longitude
  - cadence
  - heartrate
+ - temperature
 
 The resulting GPX (or FIT) file [can be uploaded on Strava](https://www.strava.com/upload/select). The above-mentioned data will be displayed on the activity page
 
