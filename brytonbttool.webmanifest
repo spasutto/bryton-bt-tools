@@ -1,0 +1,32 @@
+{
+  "name": "Bryton BT Tools",
+  "short_name": "brytonbttool",
+  "description": "Application to download FIT/GPX activity from Bryton cycling computers.",
+  "icons": [
+    {
+      "src": "icons/bryton_bt_tools512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/bryton_bt_tools256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/bryton_bt_tools64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/bryton_bt_tools32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "brytonbttool.html",
+  "display": "fullscreen",
+  "theme_color": "#78BE20",
+  "background_color": "#FFFFFF"
+}
+  

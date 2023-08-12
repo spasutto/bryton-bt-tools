@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="initial-scale=0.75, maximum-scale=1.0, user-scalable=no" />
+  <link rel="manifest" href="brytonbttool.webmanifest" />
   <script src="fitparserlib.js"></script>
   <script src="brytonbttool.js"></script>
   <script src="handlebars.min.js"></script>
@@ -109,9 +110,6 @@
       stroke-dasharray: 100 100;
       stroke-linecap: round;
       stroke-width: var(--circle-border-width);
-      // For animations...
-      // transition: stroke-dashoffset 1s ease-in-out;
-      // will-change: transform;
     }
   </style>
 </head>
@@ -369,6 +367,11 @@ function renderView() {
 window.onload = () => {
   renderView();
 };
+
+// Registering Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
 
 </script>
 
