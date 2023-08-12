@@ -421,6 +421,8 @@ let data = new Proxy(filelist, validator);
 function renderView() {
   try {
     wrapper.innerHTML = template(filelist);
+    if (window.mtops) middle.scrollTop = window.mtops;
+    middle.onscroll=() => {window.mtops = middle.scrollTop;};
     let btnConnect = document.getElementById('btnConnect');
     if (btnConnect) {
       btnConnect.addEventListener("touchstart", (e) =>{
