@@ -111,16 +111,65 @@
       stroke-linecap: round;
       stroke-width: var(--circle-border-width);
     }
+    #dl_icon {
+      position: absolute;
+      top: -100px;
+    }
+    #zoneDl {
+      display: none;
+      position:absolute;
+      top: 0;left:0;
+      width: 175px;
+      margin-left: -136px;
+      background: #41dcffeb;
+      padding: 11px;
+      line-height: 40px;
+    }
+    #zoneDl a {
+      font-size: 20pt;
+        font-weight: bolder
+    }
+    .act_ts {
+      /*font-family: monospace;*/
+    }
   </style>
 </head>
 <body>
   <!-- <pre id="logelm" style="height: 80px;overflow-y: scroll;"></pre>-->
 
   <div id="wrapper"></div>
+  <svg version="2.0" xmlns="http://www.w3.org/2000/svg" id="dl_icon" viewBox="0 0 1280.000000 1280.000000" preserveAspectRatio="xMidYMid meet" width="64px" height="64px">
+  <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+  fill="#ffffff" stroke="none">
+  <path d="M2479 12009 c-87 -13 -312 -66 -397 -95 -284 -94 -596 -324 -786
+  -578 -177 -236 -246 -384 -311 -666 -19 -80 -39 -189 -44 -242 -15 -133 -15
+  -7896 -1 -8022 24 -209 99 -472 179 -630 105 -206 294 -437 466 -571 230 -179
+  389 -258 654 -325 258 -65 -91 -60 4296 -60 4372 0 4031 -5 4290 59 230 57
+  372 121 569 259 234 164 428 390 556 647 92 185 158 422 180 647 7 69 10 1412
+  7 4058 -3 3717 -4 3960 -20 4040 -73 350 -141 521 -304 752 -104 149 -224 273
+  -364 377 -217 163 -371 237 -609 297 -279 69 80 64 -4320 63 -2192 -1 -4010
+  -5 -4041 -10z m7354 -1429 c260 -30 537 -213 677 -448 57 -97 107 -225 120
+  -307 7 -49 10 -1075 8 -3425 l-3 -3355 -29 -75 c-102 -269 -258 -450 -481
+  -560 -123 -60 -177 -78 -274 -91 -50 -6 -1237 -9 -3401 -7 l-3325 3 -104 37
+  c-304 109 -510 316 -618 623 l-28 80 0 3390 0 3390 23 70 c57 169 135 295 254
+  411 91 89 164 140 272 189 101 45 166 65 244 75 103 12 6560 12 6665 0z"/>
+  <path d="M5286 9079 l-26 -20 0 -1405 0 -1404 -648 0 c-733 0 -696 4 -690 -73
+  l3 -42 360 -249 c198 -136 736 -508 1195 -825 l835 -576 -1197 -5 c-1158 -5
+  -1197 -6 -1217 -24 -21 -19 -21 -26 -21 -343 0 -310 1 -324 20 -343 20 -20 33
+  -20 2638 -20 l2619 0 19 21 c18 20 19 43 22 318 3 305 -2 361 -36 377 -9 5
+  -545 11 -1191 14 l-1175 5 645 445 c1548 1068 1741 1203 1749 1226 12 30 -2
+  69 -29 83 -13 8 -229 11 -665 11 l-646 0 0 1404 0 1405 -26 20 c-27 21 -27 21
+  -1269 21 -1242 0 -1242 0 -1269 -21z"/>
+  </g>
+</svg>
 
   <script id="entry-template" type="text/x-handlebars-template">
     <div id="top">Bryton BT Tool</div>
     <div id="middle">
+      <div id="zoneDl">
+        <a href="#" onclick="getFile(true)">GPX</a><BR>
+        <a href="#" onclick="getFile(false)">FIT</a>
+      </div>
       {{^if connected}}
         {{^if loading}}
           <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160.000000 1280.000000" preserveAspectRatio="xMidYMid meet" id="btnConnect" onclick="connect()"><g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)" fill="#e3f6fa" stroke="none"><path d="M5620 12785 c-244 -39 -488 -168 -656 -348 -171 -184 -270 -392 -309 -647 -22 -143 -22 -4877 0 -5020 20 -132 49 -229 100 -338 170 -358 489 -599 872 -657 562 -85 1094 247 1272 793 64 195 61 59 61 2712 0 2655 3 2517 -61 2713 -178 545 -720 880 -1279 792z"/><path d="M2510 10355 c-8 -2 -49 -9 -90 -15 -208 -34 -430 -150 -588 -308 -553 -551 -926 -1059 -1231 -1672 -383 -772 -576 -1556 -597 -2430 -34 -1339 407 -2662 1235 -3710 272 -345 645 -717 986 -986 713 -559 1565 -950 2448 -1123 406 -80 677 -105 1127 -105 467 0 735 26 1170 114 2252 455 4055 2258 4510 4510 88 436 113 696 114 1165 0 376 -10 532 -55 840 -160 1102 -637 2138 -1371 2972 -154 175 -260 284 -272 280 -6 -3 -49 26 -96 64 -101 82 -287 178 -410 213 -283 80 -614 42 -867 -100 -678 -379 -808 -1289 -261 -1832 46 -45 109 -101 141 -125 104 -76 320 -369 469 -634 421 -753 543 -1634 343 -2478 -296 -1249 -1271 -2245 -2518 -2575 -490 -129 -1017 -149 -1528 -60 -480 84 -977 291 -1383 574 -309 216 -631 533 -852 841 -455 633 -683 1413 -643 2197 39 763 313 1458 811 2055 105 126 149 171 336 349 220 209 338 471 349 777 6 159 -5 248 -49 392 -54 179 -151 339 -288 475 -174 175 -389 285 -630 325 -82 13 -264 19 -310 10z"/></g>    </svg>
@@ -136,7 +185,10 @@
             <tr><td>no file...</td></tr>
           {{/if}}
           {{#each files}}
-            <tr><td>{{fileIdToTimeStamp}}</td><td><a href="#" onclick="getFile({{fileId}}, true)">GPX</a></td><td><a href="#" onclick="getFile({{fileId}}, false)">FIT</a></td></tr>
+            <tr><td class="act_ts">{{fileIdToTimeStamp}}</td><!--<td><a href="#" onclick="getFile(true, {{fileId}})">GPX</a></td><td><a href="#" onclick="getFile(false, {{fileId}})">FIT</a></td>-->
+            <td>
+              <svg width="64px" height="64px" version="2.0" onclick="openDlOptions(this)" data-fileId="{{fileId}}" class="dlBtn"><use href="#dl_icon"></use></svg>
+            </td></tr>
           {{/each}}
         </table>
       {{/if}}
@@ -202,7 +254,24 @@ function connect() {
     bryton.connect();
   } catch(e) {log(e);}
 }
-function getFile(fileId, gpx=true) {
+function closeDlOptions(e) {
+  let zoneok = e.srcElement.closest(".dlBtn") || e.srcElement.closest("#zoneDl");
+  if (!zoneok) {
+    zoneDl.style.display = 'none';
+  }
+}
+function openDlOptions(elem) {
+  let fileId = elem.dataset.fileId;
+  window.currentfile = {'id':fileId, 'gpx':false};
+  let offsets = elem.getBoundingClientRect();
+  let top = offsets.top + middle.scrollTop;
+  let left = offsets.left + middle.scrollLeft;
+  zoneDl.style.top = top+2 + 'px';
+  zoneDl.style.left = left + 'px';
+  zoneDl.style.display = 'block';
+}
+function getFile(gpx, fileId) {
+  fileId = typeof fileId === 'number' ? fileId : window.currentfile?.id;
   if (TEST_DEV) {
     data.percentage = 0;data.loading = true;
     let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=110) {clearInterval(timer);data.loading=false;}}, 1000);
@@ -351,7 +420,7 @@ let data = new Proxy(filelist, validator);
 
 function renderView() {
   try {
-    document.getElementById('wrapper').innerHTML = template(filelist);
+    wrapper.innerHTML = template(filelist);
     let btnConnect = document.getElementById('btnConnect');
     if (btnConnect) {
       btnConnect.addEventListener("touchstart", (e) =>{
@@ -366,6 +435,7 @@ function renderView() {
 
 window.onload = () => {
   renderView();
+  document.body.onclick = closeDlOptions;
 };
 
 // Registering Service Worker
