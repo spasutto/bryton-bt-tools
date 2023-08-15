@@ -187,7 +187,7 @@
           {{#each files}}
             <tr><td class="act_ts">{{fileIdToTimeStamp}}</td><!--<td><a href="#" onclick="getFile(true, {{fileId}})">GPX</a></td><td><a href="#" onclick="getFile(false, {{fileId}})">FIT</a></td>-->
             <td>
-              <svg width="64px" height="64px" version="2.0" onclick="openDlOptions(this)" data-fileId="{{fileId}}" class="dlBtn"><use href="#dl_icon"></use></svg>
+              <svg width="64px" height="64px" version="2.0" onclick="openDlOptions(this)" data-fileid="{{fileId}}" class="dlBtn"><use href="#dl_icon"></use></svg>
             </td></tr>
           {{/each}}
         </table>
@@ -261,7 +261,7 @@ function closeDlOptions(e) {
   }
 }
 function openDlOptions(elem) {
-  let fileId = elem.dataset.fileId;
+  let fileId = parseInt(elem.dataset.fileid, 10);
   window.currentfile = {'id':fileId, 'gpx':false};
   let offsets = elem.getBoundingClientRect();
   let top = offsets.top + middle.scrollTop;
