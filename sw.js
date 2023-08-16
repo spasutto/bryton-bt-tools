@@ -3,7 +3,7 @@ const currentVersion = 'v0.1';
 const cacheName = 'bryton-bt-tools-' + currentVersion;
 const appShellFiles = [
   './',
-  './brytonbttool.html',
+  './bryton.html',
   './brytonbttool.js',
   './fitparserlib.js',
   './handlebars.min.js',
