@@ -179,7 +179,11 @@ class BrytonBTTool {
     this.curstep = "getting file "+fileId+"...";
     this.progressCmdSeq();
     let data = this.requestDataCmd(12, 1, fileId);//getfilelist
-    this.writeToCmd(data);
+    return new Promise((res, reject) => {
+      this.getFilePromise = resolve;
+      // TODO rej
+      this.writeToCmd(data);
+    });
   }
   handleCmdCharacteristicValueChanged(event) {
     try {
@@ -278,10 +282,9 @@ class BrytonBTTool {
           //let file = btoa(this.onChangeDataByteArray);
           //this.log("file result :");
           //this.log(JSON.stringify(file));
-          if (typeof this.onfilereceived === 'function') {
-            let bytes = new Uint8Array(this.onChangeDataByteArray);
-            this.onfilereceived(bytes);
-          }
+          let bytes = new Uint8Array(this.onChangeDataByteArray);
+          if (typeof this.getFilePromise === 'function') this.getFilePromise(bytes);
+          if (typeof this.onfilereceived === 'function') this.onfilereceived(bytes);
         }
       } else {
         for (let i15 = 2; i15 < value.byteLength; i15++) {
