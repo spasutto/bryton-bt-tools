@@ -114,6 +114,7 @@
     #dl_icon {
       position: absolute;
       top: -100px;
+      cursor: pointer;
     }
     #zoneDl {
       display: none;
@@ -137,11 +138,16 @@
     }
     #zoneMultiple {
       display: none;
+      margin-top: -50px;
+      background: wheat;
+      padding: 5px 0px;
+    }
+    #zoneMultiple a {
+      color: #0094b5;
     }
     .act_ts {
       /*font-family: monospace;*/
     }
-
     /* Customize the label (the container) */
     .checkbox {
       display: block;
@@ -149,7 +155,6 @@
       padding-left: 35px;
       margin-bottom: 12px;
       cursor: pointer;
-      font-size: 22px;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -168,12 +173,12 @@
     /* Create a custom checkbox */
     .checkmark {
       position: absolute;
-      top: 0;
+      top: 3px;
       left: 0;
       height: 32px;
       width: 32px;
       background-color: #eee;
-      margin-left: 50px;
+      margin-left: 40px;
     }
     
     /* On mouse-over, add a grey background color */
@@ -211,6 +216,10 @@
       -ms-transform: rotate(45deg) scale(2);
       transform: rotate(45deg) scale(2);
     }
+    .dlinactive {
+      fill: #d3d3d3cc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -218,7 +227,7 @@
 
   <div id="wrapper"></div>
   <svg version="2.0" xmlns="http://www.w3.org/2000/svg" id="dl_icon" viewBox="0 0 1280.000000 1280.000000" preserveAspectRatio="xMidYMid meet" width="64px" height="64px">
-    <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+    <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)" id="dlPicto"
     fill="#ffffff" stroke="none">
     <path d="M2479 12009 c-87 -13 -312 -66 -397 -95 -284 -94 -596 -324 -786
     -578 -177 -236 -246 -384 -311 -666 -19 -80 -39 -189 -44 -242 -15 -133 -15
@@ -243,13 +252,9 @@
   </svg>
   <div id="zoneDl">
     <div id="innerZoneDl">
-      <a href="#" onclick="getFile(true)">GPX</a><BR>
-      <a href="#" onclick="getFile(false)">FIT</a>
+      <a href="#" onclick="getFiles(true)">GPX</a><BR>
+      <a href="#" onclick="getFiles(false)">FIT</a>
     </div>
-  </div>
-  <div id="zoneMultiple">
-    <a href="#" onclick="getFile(true)">GPX</a><BR>
-    <a href="#" onclick="getFile(false)">FIT</a>
   </div>
 
   <script id="entry-template" type="text/x-handlebars-template">
@@ -277,9 +282,8 @@
                 <span class="checkmark"></span>
               </label>
               </td>
-              <!--<td><a href="#" onclick="getFile(true, {{fileId}})">GPX</a></td><td><a href="#" onclick="getFile(false, {{fileId}})">FIT</a></td>-->
               <td id="dl{{fileId}}">
-                <svg width="64px" height="64px" version="2.0" onclick="openDlOptions(this)" data-fileid="{{fileId}}" class="dlBtn"><use href="#dl_icon"></use></svg>
+                <svg width="64px" height="64px" version="2.0" onclick="openDlOptions({{fileId}})" name="dlBtn" class="dlBtn"><use href="#dl_icon"></use></svg>
               </td>
             </tr>
           {{/each}}
@@ -287,6 +291,9 @@
       {{/if}}
     </div>
     <div id="bottom">
+    <div id="zoneMultiple">
+      <span id="multfiles"><a href="#" onclick="getFiles(true, true)">Concat GPX</a>&nbsp;|&nbsp;</span><a href="#" onclick="getFiles(true)">GPX</a>&nbsp;|&nbsp;<a href="#" onclick="getFiles(false)">FIT</a>
+    </div>
     {{#if loading}}
       {{curstep}}
     {{/if}}
@@ -313,6 +320,7 @@
 <script>
 const TEST_DEV = false;
 var filecache = {};
+var currentfiles = [];
 function log(msg) {
   //logelm.innerHTML += msg + '\n';logelm.scrollTop = logelm.scrollHeight;
   console.log(msg);
@@ -320,7 +328,6 @@ function log(msg) {
 let bryton = new BrytonBTTool(log);
 bryton.onerror=onerror;
 bryton.onfilelistreceived=onfilelistreceived;
-//bryton.onfilereceived=onfilereceived;
 bryton.onconnectionchanged=(connected) =>{
   data.connected = connected;
 };
@@ -353,57 +360,77 @@ function closeDlOptions(e) {
     zoneDl.style.display = 'none';
   }
 }
-function openDlOptions(elem) {
-  let fileId = parseInt(elem.dataset.fileid, 10);
-  window.currentfile = {'id':fileId, 'gpx':false};
-  /*let offsets = elem.getBoundingClientRect();
-  let top = offsets.top + middle.scrollTop;
-  let left = offsets.left + middle.scrollLeft;
-  zoneDl.style.top = top+2 + 'px';
-  zoneDl.style.left = left + 'px';*/
+function openDlOptions(fileId) {
+  if (typeof fileId === 'number') {
+    if (currentfiles.length > 0) return;
+    currentfiles = [fileId];
+    [...document.querySelectorAll('input[type=checkbox][name=chkActivity]')].forEach(cb => cb.checked = false);
+  }
+  if (currentfiles.length <= 0) {
+    return;
+  }
   zoneDl.style.display = 'block';
 }
 function updateSelectedFiles() {
-  var fileids = [...document.querySelectorAll('input[type=checkbox]')].filter(chk => chk.checked).map(chk => chk.dataset.fileid);
-  console.log(fileids);
+  currentfiles = [...document.querySelectorAll('input[type=checkbox][name=chkActivity]')].filter(chk => chk.checked).map(chk => chk.dataset.fileid);
+  let dlPicto = document.querySelector('#dlPicto');
+  if (currentfiles.length > 0) {
+    dlPicto.classList.add('dlinactive');
+    zoneMultiple.style.display = 'block';
+    multfiles.style.display = currentfiles.length > 1?'initial':'none';
+  } else {
+    dlPicto.classList.remove('dlinactive');
+    zoneMultiple.style.display = 'none';
+  }
 }
-function getFile(gpx, fileId) {
+function getFiles(gpx, concat=false) {
   closeDlOptions();
-  fileId = typeof fileId === 'number' ? fileId : window.currentfile?.id;
+  data.percentage = 0;data.loading = true;
+  updateSelectedFiles();
   if (TEST_DEV) {
-    data.percentage = 0;data.loading = true;
     let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=110) {clearInterval(timer);data.loading=false;}}, 1000);
     //let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=30) {clearInterval(timer);}}, 1000);
     return;
   }
-  data.loading = true;
-  window.currentfile = {'id':fileId, 'gpx':!!gpx};
-  if (filecache.hasOwnProperty(fileId)) {
-    onfilereceived(filecache[fileId].data);
-  } else {
-    bryton.getFile(fileId).then(onfilereceived);
+  let fileidsatelecharger=window.currentfiles.filter(fileId => !filecache.hasOwnProperty(fileId));
+  Promise.allsync(fileidsatelecharger.map(fileId => () => bryton.getFile(fileId))).then(results => {
+    data.loading = false;data.percentage=0;
+    results.forEach((bytes, i) => {
+      filecache[fileidsatelecharger[i]] = {'data': bytes};
+    });
+    if (concat) {
+      let filename = getFilename(window.currentfiles[0]);
+      let bytes = window.currentfiles.map(fileId => filecache[fileId].data);
+      downloadConcatGPX(filename, bytes);
+    } else {
+      window.currentfiles.forEach(fileId => {
+        let filename = getFilename(fileId);
+        let bytes = filecache[fileId].data;
+        if (gpx) {
+          downloadGPX(filename, bytes);
+        } else {
+          downloadFIT(filename, bytes);
+        }
+      });
+    }
+  }).catch(err => {
+    data.loading = false;data.percentage=0;
+    alert(err);
+  });
+}
+function getFilename(fileId) {
+  let filename = fileId;
+  let date = new Date(filename*1000);
+  if (!isNaN(date)) {
+    filename = 'act_'+date.toJSON().slice(0,19).replaceAll('-','').replaceAll(':','').replace('T','_');
   }
+  return filename;
 }
 function onfilelistreceived(filelist) {
   log("filelist received!");
   data.loading = false;data.percentage=0;
   data.devinfos = bryton.DeviceInfos;//{"UD":"1505160400001122","IV":"024.003.0014.10.006.001","MN":"Rider310","CP":"201,0,1,6,9,101"}
   data.files = filelist.result;
-}
-function onfilereceived(bytes) {
-  data.loading = false;data.percentage=0;
-  filecache[window.currentfile.id] = {'data': bytes};
-  let filename = window.currentfile.id;
-  let date = new Date(filename*1000);
-  if (!isNaN(date)) {
-    filename = 'act_'+date.toJSON().slice(0,19).replaceAll('-','').replaceAll(':','').replace('T','_');
-  }
-  if (window.currentfile.gpx) {
-    downloadGPX(filename, bytes);
-  } else {
-    downloadFIT(filename, bytes);
-  }
-  window.currentfile = null;
 }
 function downloadFile(fileName, bytes, mime) {
   let blob = new Blob([bytes], { type: mime });
@@ -412,7 +439,7 @@ function downloadFile(fileName, bytes, mime) {
   link.download = fileName;
   link.click();
 }
-function toGPX(bytes) {
+function toGPX(fit) {
   // TODO rajouter "with barometer" à la fin de l'attribut creator pour forcer strava à prendre en compte le barometre
   // https://developers.strava.com/docs/uploads/#device-and-elevation-data
   let prefix = '<?xml version="1.0"?><gpx creator="'+data.devinfos?.MN+'" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"><trk><trkseg>';
@@ -421,7 +448,7 @@ function toGPX(bytes) {
   let cur_hr = null;
   let cur_cad = null;
   let cur_temp = null;
-  let points = bytes.records.reduce((acc, cur) => {
+  let points = fit.records.reduce((acc, cur) => {
     if (typeof cur.heart_rate === 'number') {
       cur_hr = cur.heart_rate;
     }
@@ -468,11 +495,11 @@ function toGPX(bytes) {
 
   return prefix+points.join('')+suffix;
 }
-function downloadFIT(fileName, byte) {
-  downloadFile(fileName+'.fit', byte, 'application/octet-stream');
+function downloadFIT(fileName, bytes) {
+  downloadFile(fileName+'.fit', bytes, 'application/octet-stream');
 }
-function downloadGPX(fileName, byte) {
-  var fitParser = new FitParser({
+function downloadGPX(fileName, bytes) {
+  let fitParser = new FitParser({
     force: true,
     speedUnit: 'km/h',
     lengthUnit: 'm',
@@ -481,15 +508,37 @@ function downloadGPX(fileName, byte) {
     mode: 'list',
   });
 
-  fitParser.parse(byte, (function (error, bytes) {
+  fitParser.parse(bytes, (function (error, fit) {
     if (error) {
       log(error);
     } else {
       //this.log(JSON.stringify(bytes, null, 2));
-      downloadFile(fileName+'.gpx', toGPX(bytes), 'application/gpx+xml');
+      downloadFile(fileName+'.gpx', toGPX(fit), 'application/gpx+xml');
       //console.this.log(bytes.records[0]);
     }
   }));
+}
+function downloadConcatGPX(fileName, filesbytes) {
+  let records = [];
+  let fitParser = new FitParser({
+    force: true,
+    speedUnit: 'km/h',
+    lengthUnit: 'm',
+    temperatureUnit: 'celsius',
+    elapsedRecordField: true,
+    mode: 'list',
+  });
+  filesbytes.forEach(bytes => {
+    fitParser.parse(bytes, (function (error, fit) {
+      if (error) {
+        log(error);
+      } else {
+        records.push(fit.records);
+      }
+    }));
+  });
+  let totfit = {'records':Array.prototype.concat.apply(...records)}
+  downloadFile(fileName+'.gpx', toGPX(totfit), 'application/gpx+xml');
 }
 /* Exemple
 const p1 = () => fetch('testfetch.php?value='+1).then(r => r.text()).then(convVal);
@@ -500,6 +549,7 @@ Promise.allsync([p1,p2,p3]).then(r => {console.log('finished ! ', r)}).catch(e =
 Promise.allsync = (arrp) => {
   let results = [];
   pexec = (finish, rej, i=0) => {
+    if (arrp.length <= 0) finish(results);
     let promise = arrp[i];
     if (typeof arrp[i].then !== 'function') promise = arrp[i]();
     return promise.then(r => {
