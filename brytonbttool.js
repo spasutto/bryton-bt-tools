@@ -179,7 +179,7 @@ class BrytonBTTool {
     this.curstep = "getting file "+fileId+"...";
     this.progressCmdSeq();
     let data = this.requestDataCmd(12, 1, fileId);//getfilelist
-    return new Promise((res, reject) => {
+    return new Promise((resolve, reject) => {
       this.getFilePromise = resolve;
       // TODO rej
       this.writeToCmd(data);

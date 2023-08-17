@@ -372,7 +372,7 @@ function openDlOptions(fileId) {
   zoneDl.style.display = 'block';
 }
 function updateSelectedFiles() {
-  currentfiles = [...document.querySelectorAll('input[type=checkbox][name=chkActivity]')].filter(chk => chk.checked).map(chk => chk.dataset.fileid);
+  currentfiles = [...document.querySelectorAll('input[type=checkbox][name=chkActivity]')].filter(chk => chk.checked).map(chk => parseInt(chk.dataset.fileid, 10)).sort();
   let dlPicto = document.querySelector('#dlPicto');
   if (currentfiles.length > 0) {
     dlPicto.classList.add('dlinactive');
@@ -386,7 +386,6 @@ function updateSelectedFiles() {
 function getFiles(gpx, concat=false) {
   closeDlOptions();
   data.percentage = 0;data.loading = true;
-  updateSelectedFiles();
   if (TEST_DEV) {
     let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=110) {clearInterval(timer);data.loading=false;}}, 1000);
     //let timer = setInterval(() => {data.percentage+=10;data.percentage_inv=100-data.percentage;if (data.percentage>=30) {clearInterval(timer);}}, 1000);
@@ -413,7 +412,9 @@ function getFiles(gpx, concat=false) {
         }
       });
     }
+    updateSelectedFiles();
   }).catch(err => {
+    updateSelectedFiles();
     data.loading = false;data.percentage=0;
     alert(err);
   });
@@ -546,27 +547,16 @@ const p2 = () => fetch('testfetch.php?value='+2).then(r => r.text()).then(convVa
 const p3 = () => fetch('testfetch.php?value='+3).then(r => r.text()).then(convVal);
 Promise.allsync([p1,p2,p3]).then(r => {console.log('finished ! ', r)}).catch(e => console.log('oups', e));
 */
-Promise.allsync = (arrp) => {
+Promise.allsync = async (arrp) => {
   let results = [];
-  pexec = (finish, rej, i=0) => {
-    if (arrp.length <= 0) finish(results);
-    let promise = arrp[i];
-    if (typeof arrp[i].then !== 'function') promise = arrp[i]();
-    return promise.then(r => {
-      try {
-        results.push(r);
-        //if (i == 2) zrfr();
-        if (++i < arrp.length) return pexec(finish, rej, i);
-        else finish(results);
-      } catch(e) {
-        rej(e);
-      }
-    }).catch(rej);
-  };
-  
-  return new Promise(pexec);
+  for (const p of arrp) {
+    let promise = p;
+    if (typeof p.then !== 'function') promise = p();
+    let r = await promise;
+    results.push(r);
+  }
+  return results;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 /////// Rendering logic
